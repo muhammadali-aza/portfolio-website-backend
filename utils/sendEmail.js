@@ -1,12 +1,13 @@
 const sgMail = require("@sendgrid/mail");
 
+// Dashboard se API Key uthayega
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmail = async (data) => {
   const msg = {
-    to: process.env.EMAIL_TO,        // Your email
-    from: process.env.EMAIL_FROM,    // Verified SendGrid sender
-    replyTo: data.email,             // User email
+    to: process.env.EMAIL_TO,        // Railway Variables se aayega
+    from: process.env.EMAIL_FROM,    // Railway Variables se aayega
+    replyTo: data.email,
     subject: `📩 New Message from ${data.name}`,
     html: `
       <p><strong>Name:</strong> ${data.name}</p>
@@ -18,9 +19,8 @@ const sendEmail = async (data) => {
   try {
     await sgMail.send(msg);
     console.log("✅ Email Sent Successfully!");
-    return { success: true };
   } catch (error) {
-    console.error("❌ Email Error Details:", error);
+    console.error("❌ Email Error Details:", error.response ? error.response.body : error);
     throw error;
   }
 };
