@@ -12,7 +12,14 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+// CORS configuration
+const whitelist = ["http://localhost:5173", "https://aliraza-portfolio-website.vercel.app"];
+app.use(cors({
+  origin: whitelist,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
 
 // Routes
