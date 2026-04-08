@@ -4,37 +4,32 @@ const sendEmail = async (data) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: true, // true for 465, false for other ports
+    secure: true, // SSL
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    // CRITICAL: This forces the connection to use IPv4 and bypasses the network error
+    socketTimeout: 30000,
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    family: 4 
   });
 
   const mailOptions = {
     from: `"Portfolio" <${process.env.EMAIL_USER}>`,
     to: "alirazaitservice@gmail.com",
     replyTo: data.email,
-    subject: `📩 Portfolio: New Message from ${data.name}`,
-    html: `
-      <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Message:</strong></p>
-        <div style="background: #f4f4f4; padding: 15px; border-radius: 5px;">
-          ${data.message}
-        </div>
-      </div>
-    `,
+    subject: `📩 New Message from ${data.name}`,
+    html: `<p><strong>Name:</strong> ${data.name}</p><p><strong>Message:</strong> ${data.message}</p>`,
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("✅ Email Sent Successfully via Gmail!");
+    console.log("✅ Email Sent Successfully via IPv4!");
     return { success: true };
   } catch (error) {
-    console.error("❌ Email Error:", error.message);
+    console.error("❌ Email Error Detail:", error.message);
     throw error;
   }
 };
