@@ -1,4 +1,4 @@
-const Form = require("../models/Form"); // Import your model
+const Form = require("../models/Form");
 const sendEmail = require("../utils/sendEmail");
 
 const submitForm = async (req, res) => {
@@ -6,29 +6,25 @@ const submitForm = async (req, res) => {
     const { name, email, phone, subject, message } = req.body;
 
     if (!name || !email || !message) {
-      return res.status(400).json({ success: false, message: "Required fields missing" });
+      return res.status(400).json({ success: false, message: "Required fields missing." });
     }
 
-    // 1. Save to MongoDB (Optional but recommended)
-    const newForm = await Form.create({ name, email, phone, subject, message });
+    // 1. Save message to MongoDB
+    await Form.create({ name, email, phone, subject, message });
 
-    // 2. Prepare email data
-    const emailData = { name, email, phone, subject, message };
-
-    // 3. Trigger Email
-    await sendEmail(emailData);
+    // 2. Send the Email Notification
+    await sendEmail({ name, email, phone, subject, message });
 
     return res.status(200).json({
       success: true,
-      message: "Message saved and email sent!",
+      message: "Success! Message saved and notification sent.",
     });
-
   } catch (error) {
-    console.error("❌ Controller Error:", error);
+    console.error("❌ Controller Error:", error.message);
     return res.status(500).json({
       success: false,
-      message: "Process failed.",
-      error: error.message,
+      message: "Failed to process form.",
+      error: error.message
     });
   }
 };

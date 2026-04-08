@@ -1,21 +1,26 @@
-const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db"); // Add this
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 const formRoutes = require("./routes/formRoutes");
 
+// Load Environment Variables
 dotenv.config();
 
-// 1. Connect to Database
-connectDB(); 
+// Connect to MongoDB
+connectDB();
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 2. Routes
+// Routes
 app.use("/api/form", formRoutes);
 
-// 3. Port (Let Railway decide or default to 8080)
+// Railway Port Setup (Ensures it doesn't conflict with Port 465)
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
